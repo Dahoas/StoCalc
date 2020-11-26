@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+%you can look for fun LaTeX packages to use hereasdf
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{amsthm}
+
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage{bm}
+
+%fun commands for fun sets
+%make sure to use these in math mode
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\m}{\mathcal{M}}
+\newcommand{\Tt}{\mathcal{T}}
+\newcommand{\pa}{\partial}
+\newcommand{\Dd}{\mathcal{D}}
+\newcommand{\del}{\partial}
+\newcommand{\norm}[1]{||#1||}
+
+
+\oddsidemargin0cm
+\topmargin-2cm    
+\textwidth16.5cm   
+\textheight23.5cm  
+
+\newcommand{\question}[2] {\vspace{.25in} \hrule\vspace{0.5em}
+\noindent{\bf #1: #2} \vspace{0.5em}
+\hrule \vspace{.10in}}
+\renewcommand{\part}[1] {\vspace{.10in} {\bf (#1)}}
+
+\newcommand{\myname}{Alex Havrilla}
+\newcommand{\myandrew}{alumhavr}
+\newcommand{\myhwnum}{Hw 5}
+
+\newtheorem{prop}{Prop}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+ 
+\pagestyle{fancyplain}
+\lhead{\fancyplain{}{\textbf{HW\myhwnum}}}      % Note the different brackets!
+\rhead{\fancyplain{}{\myname\\ \myandrew}}
+\chead{\fancyplain{}{\mycourse}}
+
+\linespread{1.3}
+
+\begin{document}
+
+\medskip                        
+
+\thispagestyle{plain}
+\begin{center}
+
+{\myname}
+
+\myandrew
+
+\myhwnum
+
+\end{center}
+
+\question{Question 1(1.15)}
+
+Le Gall, 1.15
+
+%Centered gaussian process is exactly what is sounds like
+
+\begin{prop}
+	$t \to X_t$ on $[0,1]$ into $L^2(\Omega)$ is cts $\iff$ K is cts on $[0,1]^2$, where $K(s,t) = COV(X_s,X_t) = \E(X_sX_t)$
+\end{prop}
+
+\begin{proof}
+	Suppose $t \to X_t$ is continuous. Then $K$ is the integral of a product of continuous functions and is thus continuous. 
+	%? is this rigorous?
+	Now suppose $K$ continuous. Then in particular $K(t,t)$ is continuous. So $t \to X_t$ via is continuous as $\norm{X_t}_{L^2(\Omega)} = \E(X_t^2) = K(t,t)$
+\end{proof}
+
+\begin{prop}
+	Let $h : [0,1] \to \R$ be measurable s.t. $\int_0^1 |h(t)| \sqrt{K(t,t)} dt < \infty$. Then a.e. 
+		\begin{align*}
+			Z=\int_0^1 H(t) X_t(\omega)dt
+		\end{align*}
+		is absolutely convergent.
+\end{prop}
+
+\begin{proof}
+	Recall $K(t,t) = \E X_t^2$
+	Compute
+	%If expectation finite then must be finite a.e.
+	\begin{align*}
+		\E \int_0^1 |h(t)X_t|dt \leq \int_0^1 |h(t)|\E |X_t|dt \leq \int_0^1 |h(t)| \norm{X_t}_{L^2}dt < \infty
+	\end{align*}
+
+	where we have the first inequality via tonelli(since everything nonnegative).
+\end{proof}
+
+\begin{prop}
+	Suppose h integrable. Then $Z$ is the $L^2$ limit of $Z_n = \sum_i^n X_{\frac{i}{n}} \int_{(i-1)/n}^{i/n} h(t)dt$. Clearly it is then gaussian as the gaussian space is closed in $L^2$.
+\end{prop}
+
+\begin{proof}
+	Write
+	\begin{align*}
+		\sum_i^n X_{\frac{i}{n}} \int_{(i-1)/n}^{i/n} h(t)dt = \int_0^1 h(t) \sum_i 1_{(i-1/n,i/n)} X_{i/n}dt
+	\end{align*}
+
+	so we can see pointwise $Z_n \to Z$ as $n \to \infty$ for fixed $\omega$. By uniqueness of limits it STS the $Z_n$ cauchy in $L^2$. 
+
+	NTF
+
+\end{proof}
+
+\begin{prop}
+	Suppose $K \in C^2$. Then $\forall t \in [0,1]$,
+	\begin{align*}
+		X_t' := \lim_{s \to t} \frac{X_s - X_t}{s-t}
+	\end{align*}
+	exists in $L^2(\Omega)$. Further $(X_t')$ is a centered gaussian process.
+\end{prop}
+
+%Make sure to compute covariance
+
+\begin{proof}
+	NTF
+\end{proof}
+
+\question{Question 2(1.16: Kalman Filtering)}
+
+\begin{prop}
+	$\hat{X}_{n+1/n} = a_n \hat{X}_{n/n}$ for every $n \geq 0$. 
+\end{prop}
+
+\begin{proof}
+	\begin{align*}
+		\hat{X}_{n+1/n} &= E[X_{n+1} | Y_0,...,Y_n] = E[a_n X_n + \epsilon_{n+1} | Y_0,...,Y_n] \\
+		&=E[a_n X_n | Y_0,...,Y_n] + E[\epsilon_{n+1} | Y_0,...,Y_n] = a_nE[ X_n | Y_0,...,Y_n] = a_n\hat{X}_{n/n}
+	\end{align*}
+
+	where we note $\epsilon_{n+1}$ ind. from $Y_0,...,Y_n$>
+\end{proof}
+
+\begin{prop}
+	$\forall n \geq 1$,
+	\begin{align*}
+		\hat{X}_{n/n} = \hat{X}_{n/n-1} + \frac{\E [X_nZ_n]}{\E[Z_n^2]}Z_n
+	\end{align*}
+	where $Z_n := Y_n - c\hat{X}_{n/n-1}$
+\end{prop}
+
+\begin{proof}
+
+	\begin{align*}
+		&\hat{X}_{n/n-1} = \E[X_n | Y_0,...,Y_{n-1}]\\
+		&Y_n = cX_n + \eta_n
+	\end{align*}
+So compute
+	\begin{align*}
+		\hat{X}_{n/n} = \E[X_n | Y_0,...,Y_n] = \Pi_n (X)
+	\end{align*}
+
+	which we interpret as the orthogonal projection of $X$ in $L^2(\Omega)$ onto the span of $Y_0,...,Y_n$. 
+	Compute
+
+	\begin{align*}
+		Z_n &= Y_n - c \hat{X}_{n/n-1} = Y_n - c \E[X_n | Y_0,...,Y_{n-1}] \\
+		&= Y_n + \E[\eta_n - Y_n | Y_0,...,Y_{n-1}] =Y_n + \E[\eta_n]  - \E[Y_n | Y_0,...,Y_{n-1}]\\
+		&= Y_n - \Pi_{n-1}(Y_n)
+	\end{align*}
+
+	Then 
+	%Passing from probabilistic interpretation to geometric for ease
+	\begin{align*}
+		\hat{X}_{n/n} &= \E[X_n | Y_0,...,Y_n] = \Pi_n(X_n) \\
+		&= \Pi_{n-1}(X_n) + \Pi_{Z_n}(X_n) = \E[X_n | Y_0,...,Y_{n-1}] + \langle X_n,\hat{Z_n}\rangle \hat{Z_n} \\
+		&= \hat{X}_{n/n-1} + \frac{\E[X_nZ_n]}{\E[Z_n^2]}Z_n
+	\end{align*}
+\end{proof}
+
+\question{Question 3(1.18: Levy's Construction of Brownian Motion)}
+
+%Can look this up
+
+\end{document}
+
