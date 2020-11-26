@@ -38,6 +38,8 @@
 \newcommand{\myhwnum}{Hw 2}
 
 \newtheorem{prop}{Prop}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt plus 1pt}
@@ -53,11 +55,109 @@
 
 \section{Notes}
 
+\begin{remark}
+	Filtered probability space is akin to saying what knowledge is allowed before time t.
+\end{remark}
+
+\subsection{Higher Probability Theory}
+
+
 \subsection{Continuous Semi-Martingales}
 
+\begin{align*}
+	\int_0^T f(s) da(s) := \int_{[0,T]} f(s) \mu(ds)\\
+	\int_0^T f(s) |da(s)| := \int_{[0,T]} f(s) |\mu|(ds)
+\end{align*}
 
+\begin{lemma}
+$f : [0,T] \to \R$ continuous, then
+\begin{align*}
+	\int_0^T f da(s) = \lim_{n \to \infty}\sum_{i=1}^{p_n} f(t_{i-1}^n)(a(t_i^n) - a(t_{i-1}^n))
+\end{align*}
 
-\section{Proofs}
+where the $t_i^n$ are refinings of a partition
+\end{lemma}
+
+\begin{proof}
+	Follows from dominated convergence applied to the measure defining bounded variation a. Since $f_n(t) = f(t_{i}^n)$ for $t \in [t_{i-1},t_i)$ converges pointwise to f and the simple sum is the integral of an elementary function
+	\end{proof}
+
+\textbf{Quadratic Variation}
+
+Proof of quadratic variation very long and should be looked into.
+
+\textbf{Bracket}
+
+Bracket can be thought of as an extension of the quadratic variation.
+
+(This can be thought of as a cauchy schwarz type inequality for the processes)
+\begin{proof}
+\textit{Kunita-Watanabe}:
+
+Poinwise we have 
+
+\begin{align*}
+	|\langle M, N \rangle_s^t| \leq \sqrt{\langle M,M \rangle_s^t}\sqrt{\langle N,N \rangle_s^t}
+\end{align*}
+
+We show this pointwise via appoximations for these+cauchy schwarz.
+
+Then show intergral inequality using this pointwise estimate for simple functions and extend it to all functions.
+
+\end{proof}
+
+\subsection{Continuous Martingales}
+
+\subsection{Stochastic Integration}
+
+\begin{prop}
+	$\mathbb{H}^2$ is a hilbert space
+\end{prop}
+
+\begin{proof}
+	Want to show sequence $M^n$ cauchy then convergent. 
+
+	\begin{align*}
+		\lim_{m,n \to \infty}E[(M_{\infty}^n-M_{\infty}^m)^2] = \lim_{m,n \to \infty}(M^n - M^m,M^n- M^m)_H = 0
+	\end{align*}
+
+	So we know $(M_{\infty}^n)$ converging in $L^2$. We xtract this to get the same limit. 
+\end{proof}
+
+We know $H \to H \cdot M$ extends to an isometry from $L^2(M)$ into $\mathbb{H}^2$. Furthermore $H \cdot M$ is unique martingale of $\mathbb{H}^2$ s.t.
+
+\begin{align*}
+	\langle H \cdot M, N \rangle H \dot \langle M ,N\rangle
+\end{align*}
+
+This can be thought of as a version of inner product definition of derivative.
+
+Often we say the stochastic integral "commutes" with bracket ie. for $M \in \mathbb{H}^2, H \in L^2(M)$
+
+\begin{align*}
+	\langle H \cdot M,H \cdot M\rangle = H \cdot (H \cdot \langle M,M \rangle) = H^2 \cdot \langle M , M \rangle 
+\end{align*}
+
+since $\langle H \cdot M,N\rangle = H \cdot \langle M, N \rangle$
+
+?Why do we have the second equality?
+
+A lot of these results also extend to the CLM case.
+
+\textbf{Wiener Integral}
+
+?What does convergence of a process in probability mean?
+
+\section{Lists}
+
+List
+
+\begin{thebibliography}{9}
+
+\bibitem{LG} 
+Legal. Brownian Motion and Stochastic Calculus. \begin{verbatim} https://drive.google.com/drive/u/1/search?q=le%20gall \end{verbatim} 
+
+\end{thebibliography}
 
 \end{document}
 
