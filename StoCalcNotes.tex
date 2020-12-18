@@ -20,6 +20,7 @@
 \newcommand{\Tt}{\mathcal{T}}
 \newcommand{\pa}{\partial}
 \newcommand{\dD}{\mathcal{D}}
+\newcommand{\E}{\mathbb{E}}
 
 
 
@@ -35,11 +36,19 @@
 
 \newcommand{\myname}{Alex Havrilla}
 \newcommand{\myandrew}{alumhavr}
-\newcommand{\myhwnum}{Hw 2}
+\newcommand{\myhwnum}{Hw 1}
 
 \newtheorem{prop}{Prop}
 \newtheorem{lemma}{Lemma}
 \newtheorem{remark}{Remark}
+\newtheorem{defi}{Def}
+\newtheorem{apps}{Application}
+\newtheorem{quest}{Question}
+\newtheorem{ans}{Answer}
+\newtheorem{interest}{Interesting}
+\newtheorem{theme}{Theme}
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt plus 1pt}
@@ -60,6 +69,112 @@
 \end{remark}
 
 \subsection{Higher Probability Theory}
+
+\begin{prop}
+	Gaussians converge $\iff$ means and variances converge.
+\end{prop}
+
+\begin{remark}
+	Kolmogorov's Inequality allows us to bound sups of Sums of random variaibles in terms of variance(kind of like chebyshev).
+\end{remark}
+
+
+\begin{theorem}1.9
+	Let He be a centered Guassian space and $(H_i)_{i \in I}$ be collection of linear subspaces of H. Then the $H_i$ are pairwise orthogonal in $L^2$ $\iff$ $\sigma$ fields $\sigma(H_i)$ are independent.
+\end{theorem}
+
+\begin{proof}
+	$\impliedby$: First suppose $\sigma(H_i)$ ind. So for $X \in H_i, Y \in H_j$ we know $\E[XY] = \E[X]\E[Y]$. 
+
+	This is basically the ind iff. uncorrelated proof. 
+\end{proof}
+
+\begin{remark}
+	Note this is specific to gaussians and not true in general. B/c uncorrelated iff independent. Useful for making geometric arguments
+\end{remark}
+
+\subsection{Gaussian White Noise}
+
+Gaussian white noise is isometry from space of finite variance random variables to centered gaussians. Intensity is measure of measure space
+
+Note probability of gaussians space can depend on $\mu$
+
+\begin{align*}
+	E[G(f)G(g)] = \langle f,g\rangle_{L^2(E,\mathcal{E},\mu)} = \int fg d\mu
+\end{align*}
+
+\begin{prop} 2.3
+	TFAE: 
+	\begin{enumerate}
+		\item $(X_i)_{t \geq 0}$ is a pre-brownian motion\\
+		\item $(X_i)_{t \geq 0}$ is a centered gaussian process with covariance $K(s,t) = s \wedge t$
+		\item $X_0 = 0$ a.s. and for every $0 \leq s < t$ rv $X_t - X_s$ is independent of $\sigma(X_r,r\leq s)$ and distributed according to $N(0,t-s)$
+		\item $X_0 = 0$ a.s. and for every choice of $0 = t_0 < t_1 < ... < t_p$ we have $X_{t_i} - X_{t_{i-1}}$ are independent and dist according to $N(0,t_i-t_{i-1})$.
+	\end{enumerate}
+\end{prop}
+
+\begin{prop}
+	First $1 \implies 2$. Gaussian white noise maps into gaussian space, we know $B_t$ a gaussian process. 
+	\begin{align*}
+		\E[B_s B_t] = \E[G([0,s])G([0,t])] = \int_0^{\infty} dr 1_{[0,s]}1_{[0,t]} = min(s,t)
+	\end{align*}
+
+	$2 \implies 3$. Suppose $X_t$ centered gaussian with min covariance. $X_0$ is $N(0,0)$ and $X_0 = 0$ a.s. 
+
+	Let $H_s$ be span of $\{X_r, 0\leq r \leq s\}$ and $\hat{H_s}$ span of $\{X_{s+u}-X_s, u \geq 0\}$. We show orthogonal and therefore have desired indpendence
+
+	Compute
+	\begin{align*}
+		\E[X_r(X_{s+u} - X_s)] = r \wedge (s+u) - r\wedge s = r - s = 0
+	\end{align*}
+\end{prop}
+
+\begin{remark}
+	Subtracting an earlier value yields independence from earlier events - This is via theorem 1.9?
+\end{remark}
+
+\begin{theme}
+	Show independence of objects by showing orthogonality of in a geometric space
+\end{theme}
+
+\subsection{Pre-Brownian Motion}
+
+\begin{prop}
+	1. $B_t^{\lambda} = \frac{1}{\lambda}B_{\lambda^2 t}$ is a prebrownian motion
+
+	2. $B_t^{(s)} = B_{s+t} - B_s$ is a pre-Broownian motion and ind. of $\sigma(B_r, r \leq s)$
+\end{prop}
+
+\begin{proof}
+	First 1. Clearly $B_t^{\lambda} = \frac{1}{\lambda}B_{\lambda^2 t}$ are centered gaussians. Suffices to show they have min covariance. Compute
+	\begin{align*}
+		\E[\frac{1}{\lambda}B_{\lambda^2 s}\frac{1}{\lambda}B_{\lambda^2 t}] = \frac{1}{\lambda^2} min(\lambda^2s,\lambda^2 t) = min(s,t)
+	\end{align*}
+
+	Now 2. Note by the markov property we know independence to hold. Confirmed by prop $2.3$. 
+\end{proof}
+
+\subsection{Brownian Motion}
+
+\begin{remark}
+	Brownian motion constructed constructed from pre-brownian as a modification via Kolmogorov's lemma(a technical point involving holder continuity). 
+\end{remark}
+
+
+
+\textbf{Strong Markov Property of Brownian Motion}
+
+\subsection{Optional Stopping}
+
+\begin{remark}
+	Optional Stopping for martingales tells us we don't expect to change from what we already know.
+
+	$X_S = \E[X_T | \mathcal{F}_S]$
+\end{remark}
+
+\begin{remark}
+	Stopping early preserves martingales and uniform integrability.
+\end{remark}
 
 
 \subsection{Continuous Semi-Martingales}
@@ -106,7 +221,43 @@ Then show intergral inequality using this pointwise estimate for simple function
 
 \end{proof}
 
+\subsection{Martingales}
+
+\begin{prop}
+	If X is a martingale with right-continuous sample paths. Then TFAE:
+
+i) X is closed
+
+ii) $(X_t)$ is uniformly integrable
+
+iii) $X_t$ converges a.s. and in $L^1$ as $t \to \infty$
+\end{prop}
+
+\begin{proof}
+	SHoudl learn this
+\end{proof}
+
+\begin{prop}
+	If $X_t$ is a martingale then 
+	
+	i) If $X_t \in L^1$ then $Z_t = X_t - \E[X_t]$ martingale
+
+	ii) If $X_t \in L^2$ then $Y_t = Z_t^2 - \E(Z_t)^2$
+
+	ie. subtracting off mean and variance
+
+	iii) If we have for some r, $\E[e^{r X_t} < \infty$ for all t then $W_t = \frac{e^{r X_t}}{\E[e^{r X_t}]}$ is a martingale
+\end{prop}
+
 \subsection{Continuous Martingales}
+
+\begin{theorem}
+	Let $M_0 \in L^2$ a CLM. TFAE:
+
+	i) M is a martingale and $M_t \in L^2$ for arbitrary t
+
+	ii) $E[\langle M,M \rangle_t] < \infty$
+\end{theorem}
 
 \subsection{Stochastic Integration}
 
@@ -144,13 +295,289 @@ since $\langle H \cdot M,N\rangle = H \cdot \langle M, N \rangle$
 
 A lot of these results also extend to the CLM case.
 
-\textbf{Wiener Integral}
+Also the Semimartingale case
 
-?What does convergence of a process in probability mean?
+\subsection{Wiener Integral}
+
+\begin{remark}
+	Wiener integral of $h$ coincides with stochastic integral $(h \cdot B)_t$ which makes sense when viewing h as a determinsitc progressive process
+\end{remark}
+
+\begin{proof}
+	True for simple functions and then true for arbitrary functions via density
+\end{proof}
+
+\begin{remark}
+	Wiener integral integrates functions against RVs, Stochastic integral integrates processes against random variables
+\end{remark}
+
+\begin{theorem}
+	5.1.3 Properties
+\end{theorem}
+
+\begin{proof}
+	WTS $(H \cdot X)_t = \sum_{i=0}^{p-1} H_{(i)} (X_{t_{i+1}} - X_{t_i \wedge t})$
+
+	Enough to consider $X = M$ is a CLM in $H^2$. Set
+	$T_n = inf\{t \geq 0 : |H_t| \geq \} = inf\{t_i : |H_{(i)}| \geq n\}$ 
+
+	This is a stopping time. $H_s 1_{[0,T_n]}(s) = \sum_{i=0}^{p-1} H_{(i)}^n 1_{(t_i,t_{i+1}]}(s)$. 
+
+	$(H \cdot M)_{t \wedge T_n} = (H 1_{[0,T_n]}\cdot M)_t = \sum_{i=0}^{p-1} H_{(i)}^n (M_{t_{i+1}\wedge t} - M_{t_i \wedge t})$ 
+\end{proof}
+
+\subsection{Stochastic Integral Convergence Theorems}
+
+\begin{theorem}
+	Dominated Convergence Theorem
+	\begin{align*}
+		\int_0^t H_s^n d X_s \to \int_0^t H_s dX_s
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	$\int_0^t H_s^n dV_s \to \int_0^t H_s dV_s$ we have pointwise via dominated convergence theorem. So we show convergence in probability
+	%Note pointwise convergence does not show conv. in probability
+
+	Set stopping time $T_p := inf\{r \in [0,t] : \int_0^r K_s^2 d\langle M,M\rangle_s \geq p\} \wedge t$
+
+	$E[(\int_0^{T_p}H_s^n dM_s - \int_0^{T_p}H_s dM_s)^2] \leq E[\int_0^{T_p} (H_s^n -H_s)^2 d \langle M,M\rangle_s]$
+
+	goes to 0 by DCT. Note $\int_0^{T_p} K_s^2 d\langle M,M \rangle_s \leq p$. $P(T_P = t)$ tends to 1 $p \to \infty$, and the desired result follows. 
+\end{proof}
+
+\begin{theme}
+	Creating stopping times to analyze finite behavior.
+\end{theme}
+
+\subsection{Itos Formula}
+
+\begin{theorem}\textit{Itos Formula}
+
+	Let $X^1,...,X^p$ CSM. F twice cts diff. Then for every $t \geq 0$. 
+
+	\begin{align*}
+		F(X_t^1,...,X_t^p) = F(X_0^1,...,X_0^p) + \sum_{i=1}^p \int_0^t \frac{dF}{dX^i} (X_s^1,...,X_s^p) dX_s^i + (1/2)\sum_{i,j=1}^p \int_0^t \frac{d^2 F}{dx^i dx^j} (X_s^1,...,X_s^p) d\langle X^i,X^j\rangle_s
+	\end{align*}
+
+\end{theorem}
+
+\begin{proof}
+	First we address the $p=1$. Set $t > 0$. Increasing partition $0 = t_0^n < ... < t_{p_n}^n =t$. For every n write
+	%\begin{align*}
+	%	F(X_t) = F(X_0) + \sum_{i=0}^{p_n-1} (F(X_{T_{i+1}^n}) - F(X_{t_i^n))
+	%\end{align*}
+
+	We apply Taylor-Lagrange:
+	\begin{align*}
+		F(X_{t_{i+1}^n}) - F(X_{t_i^n}) = F'(X_{t_i^n})(X_{t_{i+1}^n} - X_{t_i^n}) + (1/2)f_{n,i}(X_{t_{i+1}^n} - X_{t_i^n})^2
+	\end{align*}
+
+\end{proof}
+
+\begin{remark}
+	Remarks on itos formula.
+\end{remark}
+
+\begin{prop}
+	In one dimension CLM with $t$ as quadratic variation must be a brownian Motion(BM).
+\end{prop}
+
+\begin{remark}
+	Often easier to estimate moments of $\sqrt{\langle M , M \rangle_t}$ than M hence why Burkholder-Davis-Gundy Useful
+\end{remark}
+
+\section{Girsanov's Theorem}
+
+Need to study this
+
+\subsection{Applications of Girsanov}
+
+\section{SDEs}
+
+\begin{example}
+	Ornstein-Uhlenbeck Process
+\end{example}
+
+\begin{example}
+	Geometric Brownian Motion: SDE. $\sigma > 0$, $X_0 = 1$
+	\begin{align*}
+		dX_t = r X_t dt + \sigma X_t dB_t
+	\end{align*}
+
+	Apply Ito to $Y_t = log(X_t)$.
+
+	Solve for $X_t$ by getting $Y_t$.
+\end{example}
+
+\begin{quest}
+	Long term behavior of $X_t?$
+\end{quest}
+
+\begin{ans}
+	Depends on relationship between $r, \sigma^2$
+\end{ans}
+
+\begin{example}
+	$dX_t = \sigma X_t dB_t$ with $x_0 = 1$
+\end{example}
+
+\begin{remark}
+	$dX_t = f(X_t) dB_t$ equivalent to $X_t = 1 + \int_0^t f(X_s)dB_s$ with initial condition $X_0 = 0$
+
+	Long term behavior?
+	Because positive martingale converges a.s(Even if f nonlinear). 
+\end{remark}
+
+\begin{example}
+	Brownian motin on a circle.
+	B standard BM. Set $Y_t = e^{iB_t}$.
+
+	Apply Ito to differentiate:
+	\begin{align*}
+		&dY_1(t) = dcos(B_t) = -sin(B_t)dB_t - (1/2)cos(B_t)dt\\
+		&dY_2(t) = dsin(B_t) = cos(B_t)dB_t - (1/2)sin(B_t)dt
+	\end{align*}
+
+	Sets up matrix equation
+
+\end{example}
+
+\begin{example}
+	$dX_t = rdt + \sigma X_t dB_t$ with $r,\sigma > 0$
+
+	$rdt$ is drift term and $\sigma X_t dB_t$ is volatility term. To solve start by guessing. 
+
+	For $r = 0$ solution takes form $X_t = X_0 e^{\sigma B_t - (1/2)\sigma^2 t}$ via geometric brownian motion.
+
+	So try $Y_t = X_t e^{-\sigma B_t +(1/2)\sigma^2 t} = X_t Z_t$. 
+
+	Compute
+	\begin{align*}
+		&dZ_t = Z_t(-\sigma dB_t + (1/2)\sigma^2 dt) + (1/2)Z_t \sigma^2 dt \text{ these terms we're adding are the Ito correction terms}\\
+		&dY_t = X_t dZ_t  + Z_t dX_t + d \langle X,Z\rangle_t \text{ via Ito}
+	\end{align*}
+
+	Solve $Y_t$ explicitly and verify is solves SDE.
+
+	\begin{quest}
+		Long time behavior?
+	\end{quest}
+	Blow up, because of drift. Otherwise would go to 0, as in BM case.
+\end{example}
+
+\begin{theme}
+	To differentiate processes we must add correction terms via Ito's formula.
+
+	Why? Look at Ito proof
+\end{theme}
+
+\subsection{Forward Kolmogorov Equation}
+
+\begin{align*}
+	dX_t = b(X_t) dt + \sigma(X_t)dB_t
+\end{align*}
+
+Suppose $X_t$ has density $q_t$. 
+\begin{quest}
+	Does $q_t$ solve certain PDE?
+\end{quest}
+
+\begin{remark}
+	If random variable solves SDE, does density solve PDE?
+\end{remark}
+
+\begin{theme}
+	Extracting information: computing in two ways.
+\end{theme}
+
+\begin{theme}
+	If integrating two different functions against all test functions give same results, then two functions must be the same(point of test function).
+
+	 Extracting local information from global info
+\end{theme}
+
+
+
 
 \section{Lists}
 
-List
+\subsection{Stochastic Integral Properties}
+
+\begin{enumerate}
+	\item When a the martingale square integrable, $\E[(\int_0^{\infty} H_sdM_s)^2 ] = \E\int_0^{\infty} H_s^2d \langle M,M\rangle_s$
+\end{enumerate}
+
+
+
+
+\section{Questions}
+
+\begin{quest}
+	Equivalences to gaussian white noise
+\end{quest}
+
+\begin{ans}
+	All we seem to have is prop 1.13 \ref{LG} which shows existence of gaussian white noise
+\end{ans}
+
+\begin{quest}
+	Ways of deducing a random variable is gaussian?
+\end{quest}
+
+\begin{ans}
+	Rotational invariance?
+	\begin{prop}
+		RV ind. components and rotationally invariant $\iff$ components are gaussian
+	\end{prop}
+
+	Unique characteristic.
+
+
+\end{ans}
+
+\begin{quest}
+	How do deal with sups?
+\end{quest}
+
+\begin{ans}
+	Maximal inequality, doob's martingale inequality.
+\end{ans}
+
+\begin{quest}
+	How to argue two processes have same dist?
+\end{quest}
+
+\begin{ans}
+	Show expectation same under any function. Why does this work?
+\end{ans}
+
+\begin{quest}
+	When does a limit of martingales exist? (Over time, ie. $M_{\infty}$)
+\end{quest}
+
+\begin{ans}
+	Cts sample paths is a good start. I think $M_{\infty}$ a limit in $L^2$. 
+\end{ans}
+
+\begin{quest}
+	How to compute differentials in stochastic calculus?
+\end{quest}
+
+\begin{ans}
+	Seems like it satisfies some kind of chain rule. See the wikipedia: \begin{verbatim} https://en.wikipedia.org/wiki/It%C3%B4%27s_lemma \end{verbatim}
+\end{ans}
+
+\begin{quest}
+	How to go from bound on expectation of maxes to bound on max of expectations
+\end{quest}
+
+\begin{ans}
+	Reminiscient of a uniform boundedness principle type argument.
+\end{ans}
+
+
+
 
 \begin{thebibliography}{9}
 

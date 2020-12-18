@@ -37,7 +37,7 @@
 
 \newcommand{\myname}{Alex Havrilla}
 \newcommand{\myandrew}{alumhavr}
-\newcommand{\myhwnum}{Hw 5}
+\newcommand{\myhwnum}{Hw}
 
 \newtheorem{prop}{Prop}
 
@@ -66,9 +66,7 @@
 
 \end{center}
 
-\question{Question 1(1.15)}
-
-Le Gall, 1.15
+\question{Question 1}
 
 %Centered gaussian process is exactly what is sounds like
 
@@ -106,14 +104,10 @@ Le Gall, 1.15
 \end{prop}
 
 \begin{proof}
-	Write
-	\begin{align*}
-		\sum_i^n X_{\frac{i}{n}} \int_{(i-1)/n}^{i/n} h(t)dt = \int_0^1 h(t) \sum_i 1_{(i-1/n,i/n)} X_{i/n}dt
-	\end{align*}
+	We show $Z_n \to Z$ in $L^2$. Recall the limit of gaussians is gaussian. Compute
+	$\E[|Z-Z_n|^2] = \int (\int_0^1 h(t)(X_t - \sum X_{i/n}1_{[(i-1)/n,i/n]}(t)dt)^2 \leq \int_0^1 (\int (h(t))^2 (X_t - \sum X_{i/n} 1)1_{[(i-1)/n,i/n]}(t))^2 dt$ where we tonelli. This in turn yields $\int_0^1 |h(t)| (\int (X_t - \sum X_{i/n}1_{[(i-1)/n,i/n]}(t))^2 dt = \int_0^1 |h(t)| ||X_t - \sum X_{i/n}1_{[(i-1)/n,i/n]}(t)||_{L^2}dt$.
 
-	so we can see pointwise $Z_n \to Z$ as $n \to \infty$ for fixed $\omega$. By uniqueness of limits it STS the $Z_n$ cauchy in $L^2$. 
-
-	NTF
+	We bound the $L^2$ difference using triangle inequality and the above prop via $2sup_{t \in [0,1]} \sqrt{K(t,t)} < \infty$. Then we can make the expectation small by making this small, and we are done, showing convergence in $L^2$.
 
 \end{proof}
 
@@ -127,11 +121,7 @@ Le Gall, 1.15
 
 %Make sure to compute covariance
 
-\begin{proof}
-	NTF
-\end{proof}
-
-\question{Question 2(1.16: Kalman Filtering)}
+\question{Question 2}
 
 \begin{prop}
 	$\hat{X}_{n+1/n} = a_n \hat{X}_{n/n}$ for every $n \geq 0$. 
@@ -183,9 +173,871 @@ So compute
 	\end{align*}
 \end{proof}
 
-\question{Question 3(1.18: Levy's Construction of Brownian Motion)}
+\begin{prop}
+	We compute $\E[X_n Z_n]$ and $\E[Z_n^2]$ and infer
+	\begin{align*}
+		\hat{X}_{n+1/n} = a_n(\hat{X}_{n/n-1} + \frac{cP_n}{c^2P_n + \delta^2}Z_n)
+	\end{align*}
+\end{prop}
 
-%Can look this up
+\begin{proof}
+	Compute 
+	\begin{align*}
+		\E[Z_n^2] &= \E[(Y_n - c\hat{X}_{n/n-1})^2] = \E[Y_n - cX_n + cX_n + c\hat{X}_{n/n-1})^2] = \\
+		&\E[(\eta_n + cX_n - c\hat{X}_{n/n-1})^2] = c^2P_n + \E[\eta_n^2] + 2 c\E[\eta_n(X_n -\hat{X}_{n/n-1})] \\
+		&= c^2P_n + \delta^2 + 2c\E[\eta_n(X_n - \hat{X}_{n/n-1})]
+	\end{align*}
+
+	we know $X_n$ is $\sigma(\epsilon_k,0,..,n)$ measurable so it must be the last term is 0 and so we have
+	\begin{align*}
+		\E[Z_n^2] = c^2P_n + \delta^2
+	\end{align*}
+
+	Now compute
+	\begin{align*}
+		\E[\hat{X}_{n/n-1}(X_n - \hat{X}_{n/n-1})] = \E[\Pi(X_n)(X_n - \Pi(X_n))]
+	\end{align*}
+\end{proof}
+
+\begin{prop}
+	We show $P_1 = \sigma^2$ and for every $n \geq 1$ we have $P_{n+1} = \sigma^2 + a_n^2 \frac{\delta^2 P_n}{c^2 P_n + \delta^2}$
+\end{prop}
+
+\begin{proof}
+	Compute $P_1 = \E[(X_1 - \E[X_1|\eta_0])^2] = \E[(\epsilon_1 - \E[\epsilon_1])^2] = \sigma^2$
+
+	Further $P_{n+1} = \E[(X_{n+1} - \hat{X}_{n+1/n})^2] = \E[(a_n X_n + \epsilon_{n+1} - a_n\hat{X}_{n/n})^2]= \E[\epsilon_{n+1}^2] + a_n^2 \E[(X_n - \hat{X}_{n/n})^2] - 2a_n \E[\epsilon_{n+1}(X_n - \hat{X}_{n/n}]$. The last term is 0 via independence.
+\end{proof}
+
+\question{Question 3}
+
+Define 
+
+\begin{align*}
+	h_{n,k}(t) = 2^{n/2}1_{[2k/2^{n+1},2k+1/2^{n+1})}(t)-2^{n/2}1_{[2k+1/2^{n+1},2k+2/2^{n+1})}
+\end{align*}
+
+\textbf{1.}
+
+\begin{prop}
+	The $h_{n,k}$ form an orthonormal basis on $L^2([0,1])$
+\end{prop}
+
+\begin{proof}
+
+We clearly have the $h_{n,k}$ orthonormal on $L^2([0,1])$. It suffices to show the system complete.
+
+We know the dyadic decomposition $1_{[k/2^n,k+1/2^n)}$ are dense in $L^2([0,1])$. So we just show these are contained in the span of the $h_{n,k}$. 
+
+%?How is this done?
+\end{proof}
+
+\textbf{2.}
+
+\begin{prop}
+	Let $\{N_0\} \cup \{N_{n,k}\}$ are independent $N(0,1)$. Then $\exists !$ gaussian whit enoise G on $[0,1]$ with intensity dt s.t. $G(h_0) = N_0$ and $G(h_k^n) = N_k^n$. 
+\end{prop}
+
+\begin{proof}
+	Uniqueness given existence is clear.
+
+	Define 
+	\begin{align*}
+		G(c_0h_0 + \sum_{h=0}^{\infty}\sum_{k=0}^{2^n-1} c_{n,k}h_{n,k}) = c_0N_0 + \sum_{h=0}^{\infty}\sum_{k=0}^{2^n-1} c_{n,k}N_{n,k}
+	\end{align*}
+
+	Via is an isometry with intensity $dt$ since these are sums of gaussians on one hand and sums of orthonormal coordinates on the other.
+\end{proof}
+
+\begin{prop}
+	For $t \in [0,1)$ we write $B_t = G(1_{[0,t]})$. Then
+	\begin{align*}
+		B_t = tN_0 + \sum_{n=0}^{\infty}\sum_{k=0}^{2^n-1}g_{n,k}(t)N_{n,k}
+	\end{align*}
+	with convergence in $L^2$ and $g_{n,k}(t) = \int_0^t h_{n,k}(s)ds$
+\end{prop}
+
+\begin{proof}
+	This follows directly from the linearity of inner product and Gaussian white noise.
+\end{proof}
+
+\begin{prop}
+	For every integer $m \geq 0$ and $t \in [0,1]$ we have
+	\begin{align*}
+		B_t^m = tN_0 + \sum_{n=0}^{m-1}\sum_{k=0}^{2^n-1} g_{n,k}(t) N_{n,k}
+	\end{align*}
+	Then $t \to B_t^m$ converges uniformly on $[0,1]$.
+\end{prop}
+
+\begin{proof}
+	We want to use Borel Cantelli. To do so compute $\sum P(sup_{0 \leq k \leq 2^n-1}|N_{n,k} > 2^{n/4}) \leq \sum^{\infty} \sum^{2^n-1} P(|N_{n,k}| > 2^{n/4}) \leq \sum 2^n e^{-2^{n/2-1}} < \infty$. So borel cantelli tells us 
+	\begin{align*}
+		P(\bigcup \bigcap \{sup_{0 \leq k \leq 2^n-1} |N_{n,k}| \leq 2^{n/4}\})
+	\end{align*}
+
+	Now compute $sup_{t \in [0,1]} |\sum_{n=m_1}^{m_2}\sum_{k=0}^{2^n-1} g_{n,k}(t) N_{n,k}| \leq \sum_{m_1}^{m_2} 2^{-n/4} \to 0$. This gives uniform convergence on $[0,1]$ and yields continuity of the map $t \to B_t$. We can then compute $\E[(B_t - B_s)^2] = \E[G(1_{(s,t]})^2] = t-s$ and $\E[(B_t- B_s)B_r] = 0$. 
+\end{proof}
+
+\begin{prop}
+	We know we can find $W_t$ equal to $B_t$ almost surely which has cts sample path
+\end{prop}
+
+\begin{proof}
+	We define gaussian gaussian white noises $G^m(c_0h_0 + \sum\sum c_{n,k}h_{n,k}) = c_0N_0^m + \sum \sum c_{n,k}N^{n,k}^m$ as above and define $B_t^m$ correspondingly. Then define $W_t = \sum_{k=1}^{m-1} B_1^k + B^m_{t-floor(t)}$. This has the desired continouous sample path. 
+\end{proof}
+
+\question{Question 4}
+
+\begin{prop}
+	Let B standard brownain motion. Let $f \in C_c^{\infty}$ with $p \in [0,1]$ and partition up to time t
+	\begin{align*}
+		S_f(p) = \sum_{j=0}^{n-1} f(B_{(1-p)t_j + pt_{j+1}})(B_{t_{j+1}}-B_{t_j})
+	\end{align*}
+
+	For smooth f we have $S_f(p) - S_f(0)$ converges in probability as the size of the partition goes to zero.
+
+	%degrees of convex interpolation
+\end{prop}
+
+\begin{proof}
+	We claim the expression converges in probabiliy to $pt$.
+
+	First we consider $f(x) = x$. In this case we have
+
+	$S(p) = \sum_{j=0}^{n-1}(B_{(1-p)t_j + pt_{j+1}})(B_{t_{j+1}} - B_{t_j})$ and then 
+	\begin{align*}
+		S_f(p) - S_f(0) &= \sum_{j=0}^{n-1}(B_{(1-p)t_j + pt_{j+1}})(B_{t_{j+1}} - B_{t_j}) - \sum_{j=0}^{n-1}(B_{t_j}(B_{t_{j+1}} - B_{t_j})\\
+		&= \sum_{j=0}^{n-1}(B_{(1-p)t_j + pt_{j+1}}- B_{t_j})(B_{t_{j+1}} - B_{t_j}) 
+	\end{align*}
+
+	 Note by proposition 2.16 we know for $p=1$ we get convergence to the variance of $B_t$ ie. t in $L^2$ and therefore in probability. The first term also does, yielding $t$ as an upper bound. But as $p \to 0$ clearly via via continuity of sample paths we get 0. Write
+	 $\sum_{j=0}^{n-1}(B_{(1-p)t_j + pt_{j+1}}- B_{t_j})(B_{t_{j+1}} - B_{t_j}) = \sum_{j=0}^{n-1}(G(1_{[t_j,pt_{j+1})}))(G(1_{[t_j,t_{j+1})]})) \to tp$
+	%Convergence in probability: As n goes to \infty probability of equality is 1
+
+	The same analysis applies to the general case to compute $f(t)p$ as the limit.
+
+	
+\end{proof}
+
+\question{Question 5}
+
+\begin{prop}
+	Let $G : L^2([0,1]) \to L^2(\Omega,\mathcal{F},\mathbb{P})$ linear s.t.
+	\begin{enumerate}
+		\item $G(f)$ has zero mean and preserves norm
+		\item If $A,B \subseteq [0,1]$ with $A\cap B = \emptyset$, $G(A)$ ind. from $G(B)$
+		\item G is stationary in the sense $G(A)$ has same dist as $G(A + x)$ when $A+x\subseteq [0,1]$ with $A \subseteq [0,1]$. 
+		\item For any $n \in \Z_+$ we find $C_n > 0$ s.t. $\E[G(A)/\sqrt{|A|}^n] \leq C_n$ for $A \subseteq \R$.
+	\end{enumerate}
+
+	Then G is a gaussian white noise.
+
+\end{prop}
+
+\begin{proof}
+	Linearity and norm preservation prove G is isometry. It suffices to show its image is a gaussian space. In particular suffices to show $G(1_A)$ is a gaussian as then via linearity and a density argument we have the image gaussian.
+
+	Mean 0 comes from 1. To show $G(1_A)$, $A \subseteq [0,1]$ gaussian we consider its characteristic $\E e^{i t G(1_A)}$, which is shown to be the characteristic of a gaussian. 
+\end{proof}
+
+
+\question{Question 6}
+
+\begin{prop}
+	Let $\mathbb{W}$ be a gaussian white enoise on $L^2(\R^d)$. Define $W_r(x) = \frac{\mathbb{W}(B_r(x))}{|B_r(x)|}$. Then $\{W_r(x),x \in \R^d\}$ is a gaussian process. ITs distribution does not converge as $r \to 0$
+\end{prop}
+
+\begin{proof}
+	First we show we have a gaussiain process for fixed $r$. Clearly for each $x \in \R$ we have $W_r(x)$ is a gaussian random variable since $\mathbb{W}$ is a gaussian white noise. Then we consdier a linear combination $\sum_i c_i W_{x_i}$ which is also gaussian since if a ball is nonintersecting then it's independenct and if we have an intersection it can be rewritten as the sum of limits of balls which are disjoint(and thus independent gaussians).  Let $\alpha = |B_r(x)|$. We compute its covariance
+	\begin{align*}
+		\E[W_r(x)W_y(x)] = \frac{1}{\alpha^2} \int_{\R^d} 1_{B_r(x)} 1_{B_r(y)} dm = \frac{m(B_r(x) \cap B_r(y))}{\alpha^2}
+	\end{align*}
+
+	Now we argue $W_r(x)$ does not converge in distribution as $r \to 0$ for fixed x. Note if it did converge it must converge to a gaussian. But if this were true the variances would converge. Note the variance is $m(B_r(x) \cap B_r(x))/\alpha^2 = \alpha/\alpha^2 = \alpha = 1/|B_r(x)|$. Clearly these blow up as $r \to 0$ so this cannot be the case.
+\end{proof}
+
+\question{Question 7}
+
+Denote by $\{e_n(x)\} = \{1/\pi sin(n x),1/\pi cos(nx)\}$ ONB of $L^2[0,2 \pi]$. For any $\lambda =(\lambda_n) \in l_2$. Define $V(x) = \sum_n \lambda_n e_n(x) \xi_n$ with $\{\xi_n\}$ is iid standard gaussian.  
+
+\begin{prop}
+	We know $\{V(x) : x \in [0,2\pi]\}$ is a gaussian process
+\end{prop}
+
+%?Is there more to a gaussian process than 
+
+\begin{proof}
+	Clearly for fixed $x$, $V(x)$ is a centered gaussian. Note linear combinations of these are simply linear combinatinos of the $\{\xi_n\}$ iid basis standard gaussians, which is itself a gaussian. We compute the covariance:
+	\begin{align*}
+		\E[V(x)V(y)] = \E[\sum_n \lambda_j e_j(x) \xi_j \sum_n \lambda_i e_i(x) \xi_i] = \E[\sum_n \lambda_j^2e_j^2 \xi_j^2] = \sum_n \lambda_j^2e_j^2(x)
+	\end{align*}
+\end{proof}
+
+\begin{prop}
+	We have $G(f) = \int_0^{2\pi} f(x)V(x) dx = \sum_n \lambda_n \langle f,e_n \rangle \xi_n$ is a mapping from $L^2[0,2\pi]$ to a centered gaussian space
+\end{prop}
+
+\begin{proof}
+	Clearly the outputs are centered gaussians
+\end{proof}
+
+\begin{prop}
+	Find the operator $K : L^2[0,2\pi] \to L^2[0,2\pi]$ s.t. $\E[G(f)G(g)] = \langle f ,Kg \rangle$ 
+\end{prop}
+
+\begin{proof}
+	Compute:
+	\begin{align*}
+	\E[G(f)G(g))] &= \E[\sum_n \lambda_i \langle f ,e_i \rangle \xi_i \sum_n \lambda_j \langle g,e_j\rangle \xi_j] = \sum_n \lambda_i^2 \langle f, e_i \rangle \langle g,e_i\rangle \\
+	&= \langle f, \sum_i \lambda_i^2 \langle g ,e_i \rangle e_i \rangle
+	\end{align*}
+
+	which gives K.
+\end{proof}
+
+\begin{prop}
+	We choose a sequence of $\lambda$ so that for corresponding V approximates a gaussian white nosie. 
+\end{prop}
+
+%Simulate?
+
+\begin{proof}
+	We simply need to approximate an isometry ie. want $\langle f,g \rangle = \langle f, \sum_i \lambda_i^2 \langle g,e_i\rangle e_i$. So we choose eventually 0 sequences of $1$ since the $e_i$ form an ONB.
+\end{proof}
+
+
+
+\question{Question 8}
+
+\begin{prop}
+Let G be a gaussian white noise on $L^2(\R^d)$ and let $\phi \in C_c^{\infty}(\R^d)$. Set $\{V(x) = G(\phi(\cdot - x))\}_{x \in \R^d}$. We compute the covariance and show V has a continuous modification
+\end{prop}
+
+\begin{proof}
+	Without loss of generality suppose $d=1$. 
+
+	Let K be the compact support of $\phi$ and M its measure. Let m be the maximum value of $\phi$. 
+
+	First computing the covariance:
+	\begin{align*}
+		\E[V(x)V(y)] &= \E[G(\phi(\cdot - x))G(\phi(\cdot - y))] = \int_{\R^d} \phi(z - x)\phi(z - y) dm \\&= \int_{\R^d} \phi(z)\phi(z + x - y)dm
+	\end{align*}
+
+	ie. the covariance is a measure of how much the compact support and shifted compact support overlap.
+
+	We seek to use Kolmogorov's lemma. Write
+	\begin{align*}
+		\E[|X_s - X_t|^2] &= \int_{\R^d} (\phi(z-s)-\phi(z-t))^2dm \leq 2mM|s-t|
+	\end{align*}
+
+	where we get the last inequality by considering the geometry in 1d and looking at the overlap. Thus we may apply Kolmgorov.
+\end{proof}
+
+
+\question{Question 9}
+
+\begin{prop}
+	Consider a random process $(F(x))_{x \in \R^d}$ satisfying
+	\begin{align*}
+		\sup_{x \in \R^d} \E[|F(x)|^p] \leq C(p), \sup_{x,y \in \R^d} \E[|F(x) - F(y)|^p] \leq C(p) |x-y|^{p \beta}
+	\end{align*}
+	for $p \geq 1$ where where $C(p) > 0$ is some constant only depending on p. Let $w_{\alpha}(x) = (1+|x|)^{\alpha}$ be a weight, then there exists a modification of F, which we still denote by F, s.t. for any $p \geq 1, \alpha > 0, \epsilon > 0$ we have
+	\begin{align*}
+		\E[(\sup_{x \in \R^d} \frac{|F(x)|}{w_{\alpha}(x)})^p] + \E[(\sup_{x,y \in \R^d,|x-y|\leq 1}\frac{|F(x)-F(y)|}{w_{\alpha}(x)|x-y|^{\beta - \epsilon}})^p] \leq C(p,\alpha,\epsilon)
+	\end{align*}
+	for some constant C depending on $p,\alpha,\epsilon$. 
+\end{prop}
+
+%Good proof to learn and study!
+
+\begin{proof}
+	It suffices to consider $d = 1$. Otherwise we simply biject and reindex. 
+
+	Kolmogorov's lemma immediately tells us we can find a modification satisfying a pointwise bound(but not necessarily uniform as is desired). Because we have $sup_{x \in \R^d} \E[|F(x)|^p] \leq C(p)$ we know our random variables in $L^p$ and uniformly bounded. Because we have this integrability, we know our random variables cannot be too large most of the time. In particular we will have $\E[(sup_{x \in \R^d} \frac{|F(x)|}{w_{\alpha}(x)})^p]$ uniformly bounded dependent on $\alpha$ and $p$ since otherwise we would not have this uniform integrability. In particular if this quantity was not finite we know with nonzero probability. we can find a process $F(x)$ which is infinite for some input. Further since we are weighting with $w_{\alpha}$ which blows up nonintegrably we know for large x we must find correspondingly larger $|F(x)|$ as $|x| \to \infty$. We can repeat this argument for every input which has inifinte supremum. Then using this plus the second condition allows us to construct an $F(x)$ which does not have finite $L^p$ norm, as a we finite a sequence of random variables which get large on a nonnegligable subset, a contradiction. 
+
+	We can argue similarly for the other term to get the overall bound.
+\end{proof}
+
+\question{Question 10}
+
+\begin{prop}
+	The process $(W_t)_{t \geq 0}$ via $W_0 = 0$ and $W_t = tB_{1/t}$ is a real brownian motion started from 0. Then argue $lim_{t \to \infty} B_t / t = 0$ a.s.
+\end{prop}
+
+\begin{proof}
+	First we establish $W$ a pre-Brownian motion and then conclude indistinduishable from brownian motion up to a modification.
+
+	Clearly the process is centered as each $B_t$ centered. Then we compute the covariance:
+	\begin{align*}
+		\E[W_s W_t] = \E[stB_{1/s}B_{1/t}] = st min(1/s,1/t) = min (s,t)
+	\end{align*}
+
+	Then up to a modification $W_t$ is a brownian motion(has continuous sample paths). 
+
+	We know $\frac{B_n}{n} \to 0$ via summing $B_{n+1} - B_n$ and SLLN. So we have the desired result in the discrete case. 
+
+	To extend to the continuos case we apply the maximal inequality(Clearly brownian motion supermartingale) to see
+	\begin{align*}
+		nP(sup_{0 \leq s\leq n}|B_n - B_s| > n) \leq E[|B_n - B_0|] = E[|B_n|]
+	\end{align*}
+
+	Then applying borel-cantelli we see $\frac{B_s}{s} \to 0$ almost surely. Since this occurs almost everywhere redfine $W_s$ to appropriately on a set of measure 0. This completes the proof.
+
+
+\end{proof}
+
+\question{Question 11}
+
+Set $W_t = B_t - tB_1$ for $t \in [0,1]$
+
+\begin{prop}
+	$(W_t)_{t \in [0,1]}$ is a centered gaussian process
+\end{prop}
+
+\begin{proof}
+	To show $W_t$ is a gaussian process we show an arbitrary linear combination $\sum_i c_i W_{t_i}$ is normally distributed. But we have
+	\begin{align*}
+		\sum_i c_i W_{t_i} = -S(B_1 - B_{t_m}) + (S + c_m)(B_{t_m} - B_{t_{m-1}}) + ... + (S + \sum_{i=1}^mc_i)B_{t_1}
+	\end{align*}
+
+	where S is the dot product of time $ts$ and coefficient $cs$. This is a sum of independent gaussians and is hence gaussian.
+
+	We compute covariance:
+	\begin{align*}
+		\E]W_sW_t] = \E(B_s - sB_1)(B_t - tB_1) = t \wedge s - ts - ts + ts = t \wedge s - ts
+	\end{align*}
+\end{proof}
+
+\begin{prop}
+	Let $0 < t_1 < t_2 < ... < t_p < 1$. Then the law of $(W_{t_1}),..., W_{t_p})$ has density
+	\begin{align*}
+		g(x_1,...,x_p) = \sqrt{2\pi} p_{t_1}(x_1)p_{t_2 - t_1}(x_2 - x_1)...p_{1-t_p}(-x_p)
+	\end{align*}
+	Then the law of $(W_{t_1},...,W_{t_m})$ can be interpreted as conditional law on $(B_{t_1},..,B_{t_m})$ when $B_1 = 0$. 
+\end{prop}
+
+\begin{proof}
+	We set a partitioning $t_i$ of $[0,1]$ and let F be a measurbale function. Compute
+	\begin{align*}
+		\E[F(W_{t_1},...,W_{t_m})] &= \int_{\R^{m+1}} F(x_1-t_1x_{m+1},...,x_m-t_mx_{m+1}) \prod p_{t_i - t_{i-1}}(x_i - x_{i-1}) dx_1 ....dx_{m+1} \\
+		&= \int_{\R^{m+1}} F(y_1,...,y_m) \prod p_{t_i - t_{i-1}}(y_i-y_{i-1}+(t_i-t_{i-1}y_{m+1})) p_{1-t_m} (y_{m+1} - y_m -t_my_{m+1})dy_1 ....dy_{m+1} \\
+		&= \int_{\R^m} F(y_1,...,y_m) \prod p_{t_i - t_{i-1}}(y_i - y_{i-1})p_{1-t_m}(-y_m)\sqrt{2\pi}dy_1 ... dy_m
+	\end{align*}
+\end{proof}
+
+
+\question{Question 12}
+
+\begin{prop}
+	$limsup_{t \to 0} \frac{B_t}{\sqrt{t}} = \infty, liminf_{t \to 0} \frac{B_t}{\sqrt{t}} = - \infty$
+\end{prop}
+
+\begin{proof}
+	Let $M > 0$. Compute
+	\begin{align*}
+		P(limsup_{t \to 0}\frac{B_t}{\sqrt{t}} \geq M) &
+		\geq P(limsup_{n \to \infty}\frac{B_{1/n}}{\sqrt{1/n}} \geq M) \geq limsup_{n \to \infty} P(\frac{B_{1/n}}{\sqrt{1/n}} \geq M)\\
+		&= \int_M^{\infty} \frac{1}{\sqrt{2\pi}} e^{-x^2/2}dx > 0
+	\end{align*}
+
+	via Fatou.
+
+	The 0-1 Law tells us $\mathcal{F}_{0+}$ is trivial, hence it must be, $P(limsup_{t \to 0}\frac{B_t}{\sqrt{t}} \geq M) = 1$. Note $limsup_{t \to 0}\frac{B_t}{\sqrt{t}} \geq M \in \mathcal{F}_{0+}$ clearly since it is in each element of the intersection. Taking the negation gives a similar result for the liminf.
+\end{proof}
+
+\begin{prop}
+	The above implies we have no right derivative for $t \to B_t$.
+\end{prop}
+
+\begin{proof}
+	Compute
+	\begin{align*}
+		P(limsup_{t \to s} \frac{B_t - B_s}{t-s} = \infty) = P(limsup_{t \to s} \frac{B_{t-s}}{\sqrt{t-s}} = \infty) = 1
+	\end{align*}
+	by rescaling by the variance. A similar computation shows the liminf goes to $-\infty$, establishing the lack of a right derivative.
+\end{proof}
+
+\question{Question 13}
+
+
+
+\begin{prop}\textit{Time Reversal} 
+	Set $B_t' = B_1 -B_{1-t}$  for $t \in [0,1]$. This has the same law as $B_t$. 
+\end{prop}
+
+\begin{proof}
+	The idea is to compute the expectation under arbitrary (measurable) function F of a collection of $B_i'$ and show it agrees with the expectation of $B_i$. 
+
+	Set $\{t_i\}$ as a partitoining of 1. Let $F : \R^m \to \R$. We compute
+	\begin{align*}
+		\E[F(B_{t_1}',...,B_{t_m}')] = \E[F(B_1 - B_{1-t_1},...,B_1 - B_{1-t_m})] = \int_{\R^{m+1}} F(x_{m+1} - x_m,...,x_{m+1}-x_1) \prod_{i=1}^{m+1}p_{t_i - t_{i-1}}(x_i-x_{i-1}) dx_1...dx_{m+1}
+	\end{align*}
+
+	Via independence
+	%Theme: Write RVs as diff. to exploit ind. Idea: Use what tricks you can to exploit the tools you have. Try to apply what you know.
+	This simplifies to with a change of variables
+	\begin{align*}
+		\int_{\R^{m+1}} F(y_1,...,y_m) \prod p_{t_i - t_{i-1}}(y_i - y_{i-1}) dy_1...dy_{m+1}
+	\end{align*}
+	Now note we can factor out $\int_{\R} p_{t_{m+1} - t_m}(y_{m+1} - y_m) dy_{m+1}=1$ giving the desired result which is $\E[F(B_{t_1},...,B_{t_m})]$. Since F arbitrary, this completes the proof.
+\end{proof}
+
+\question{Question 14}
+
+\begin{prop}
+	For any bounded function $f : \R^d \to \R$, consider 
+	\begin{align*}
+		u(t,x) = \E[f(x+B_t)] = \int_{\R^d}q_t(x-y)f(y)dy
+	\end{align*}
+
+	Then u solves the heat equation.
+\end{prop}
+
+\begin{proof}
+	Recall the density $q_t(x) = \frac{1}{\sqrt{2\pi t}^d} e^{-|x|^2/2t}$. Immediatley we should recognize this as the fundamental solution to the heat equation in $\R^d$. So from PDE theory we know the convolution with an initial condition $f: \R^d \to \R$ is a solution to the heat equation.
+
+	Probabilistically we compute $u_{x_ix_i}(t,x) = \E[f''(x+B_t)]$ via DCT. Compute
+	\begin{align*}
+		u_t(t,x) = \frac{d}{dt}\int_{\R^d} q_t(x-y)f(y)dy = \int_{\R^d} \frac{d}{dt}q_t(x-y)f(y)dy
+	\end{align*}
+
+	where we pass the limit inside via DCT. We compute the differential w.r.t t of $q_t$ as $-(2/d\sqrt{2\pi}^d)\frac{e^{-|x|^2/2t}}{\sqrt{2\pi}^d \sqrt{t}^{d+1}} + \frac{1}{\sqrt{2\pi t}^d}e^{-|x|^2/2t}(\frac{|x|^2}{2t^2})$
+
+	We similarly two derivatives of x:
+
+	\begin{align*}
+		u_{xx}(t,x) = \frac{d^2}{dx^2}\int_{\R^d} q_t(x-y)f(y)dy = \int_{\R^d} \frac{d^2}{dx^2}q_t(x-y)f(y)dy
+	\end{align*}
+
+	We compute $\frac{d}{dx}q_t(x) = frac{1}{\sqrt{2\pi t}^d} e^{-|x|^2/2t}(-\frac{-\sum x_i}{t})$. Differentiating again we see we agree with the time derivative(except for a factor of (1/2)) showing the desired result.
+
+	Note we justify DCT via the boundedness of f and by picking a small ball around the origing, keeping the kernel away from 0. 
+	%what's the probabilistic way of doing this?
+	%Convolution is need to keep things small and apply away from origin?
+\end{proof}
+
+\question{Question 15}
+
+Let $w$ be as defined and $S_n$ a d-dimensional symmetric simple random walk ind. of d. Set $Z_{\beta}(n)$ as defined.
+
+\begin{prop}
+	$\{Z_{\beta}(n)\}$ is a martingale with respect to $\mathcal{F}_n = \sigma(w(i,j): i \leq n, j \in \Z^d\}$
+\end{prop}
+
+\begin{proof}
+
+	Note the process is adapted by design of the filtration(since we take the expectation over the random walk) and we see each term in $L^1$ since we can compute it expliclty(as the product of expectations of exponential gaussians).
+
+	We compute 
+	\begin{align*}
+		\E[Z_{\beta}(n+k) | \mathcal{F}_n] = \E[e^{\beta \sum^{n+k} w(i,S_i) - (1/2)\beta^2 (n+k+1)} | \mathcal{F}_n] = \E[e^{\beta \sum_{n+1}^{n+k} w(i,S_i) - (1/2)\beta^2 k} | \mathcal{F}_n] e^{\beta\sum^n w(i,S_i) - (1/2)\beta^2(n+1)}
+	\end{align*}
+
+	so we argue remainder of expectation is 1.
+
+	Write $\E [ e^{\beta \sum_{n+1}^{n+k} w(i,S_i)-1/2)\beta^2 k}] = \E[e^{\beta \sum_{n+1}^{n+k} w(i,S_i)}] e^{(-1/2)\beta^2 k} = 1$ since the expectation of the gaussian random variables is $e^{(1/2) \beta^2}$ where the variance is $\beta^2$. This shows the random variable a martingale.
+\end{proof}
+
+\begin{prop}
+	$Z_{\beta}(n)$ converges a.s. as $n \to \infty$. 
+\end{prop}
+
+\begin{proof}
+	%Very sketch
+	$Z_{\beta}(n)$ converges almost surely to 1. To see this we compute the expectation of one term, which is $e^{(1/2)\beta^2} * e^{-(1/2)\beta^2}$. Then as $n \to \infty$, since we have integrability we apply the SLLN the log and see this goes to 0. Hence pointwise the exponential of this goes to 1.
+\end{proof}
+
+
+\question{Question 16}
+
+\begin{prop}
+	Let M be a martingale with continuous sample paths s.t. $M_0 = x > 0$. Suppose $M_t \geq 0$ for $t \geq 0$ and $M_t \to 0$ when $t \to \infty$ a.s. Then for $y > x$ we have
+	\begin{align*}
+		P(sup_{t \geq 0} M_t \geq y) = \frac{x}{y}
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	The idea is to first show the uniformly integrable case and then extend to the general case via a stopping time argument.
+
+	%Recall nonnegative martingales always have a limit?
+
+	In the uniformly integrable case we know M bounded in L1 and $M_{\infty}$ = 0. We choose the stopping time $T = inf\{t \geq 0 | M_t = y\}$ ie. the first time at which we get to y. Via optional stopping we know $\E[M_T] = \E[M_0] = x$. Then $\E[M_T] = yP(T < \infty)$ since $M_t \to 0$. We compute
+	\begin{align*}
+		P(T < \infty) = P(sup_{t \geq 0} M_t \geq y)
+	\end{align*}
+
+	which establishes what is desired.
+
+	In the general case for $n \geq 1$ we write $N_t^{(n)} = M_{t \wedge n}$. Thus for fixed n we know $\{N_t^{(n)}\}$ uniformly integrable and we have the result. Letting $n \to \infty$ finished the proof.
+\end{proof}
+
+\begin{prop}
+	We compute the law of $sup_{t \leq T_0} B_t$ started from $x > 0$ and $T_0 = inf\{t \geq 0 : B_t = 0\}$
+\end{prop}
+
+\begin{proof}
+	Clearly for $y \leq x$ we know $P(sup_{t \leq T_0} B_t \geq y) = 1$. For $y > x$, write $N_t = B_{t \wedge T_0}$. We know this is a martingale since $B_t$ martingale. Further we know $N_t \to 0$ since $T_0 < \infty$. Then we apply the previous propsition to finish, getting $\frac{x}{y}$.
+\end{proof}
+
+\begin{prop}
+	Suppose B is a brownia motion started at 0, and $\mu > 0$. Then $sup_{t \geq 0}(B_t - \mu t)$ is exponentially distributed with parameter $2 \mu$
+\end{prop}
+
+\begin{proof}
+	The idea is to massage the expression into one computable with martingale technology using the scaling property of brownian motion.
+
+	For nonpositive y clearly we have probability 1. Fix $y > 0$. Note from a direct computation we know $e^{B_t - (1/2)t}$ is martingale. Also recall if $B_t$ brownian motion then $\frac{1/\lambda}B_{\lambda^2 t}$ brownian motion. So massage:
+	\begin{align*}
+		P(sup_{t \geq 0}(B_t -  \mu t) \geq y) &= P(sup_{t \geq 0}(B_{t/4\mu^2} -  1/(4\mu) t) \geq y)\\
+		&= P(sup_{t \geq 0}(2 \mu B_{t/4\mu^2} -  1/2 t) \geq 2\mu y) \\
+		&= P(sup_{t \geq 0}(B_t -  1/2 t) \geq 2\mu y) = P(sup_{t \geq 0}e^{(B_t -  1/2 t)} \geq e^{2\mu y})
+	\end{align*}
+
+	To conclude we argue $P(sup_{t \geq 0}e^{(B_t -  1/2 t)} \geq e^{2\mu y}) = e^{-2 \mu y}$ which establishes the distribution.  We get this since $e^{2 \mu y} > 1 = e^{B_0 - 0}$ and $e^{B_t - 1/2 t} \to 0$ since $B_t/t \to 0$. 
+	%How do we have this equality? Has something to do with exponential RV with parameter [blank]
+
+\end{proof}
+
+\question{Question 17}
+
+TODO
+
+Let B be a brownian motion at 0. Set $T_x = inf\{t \geq 0 : B_t = x\}$. Fix $a < 0 < b$ and write $T = T_a \wedge T_b$. 
+
+\begin{prop}
+	For every $\lambda > 0$ we have
+	\begin{align*}
+		\E[e^{-\lambda T}] = \frac{cosh(\frac{b+a}{2}\sqrt{2\lambda})}{cosh(\frac{b-a}{2}\sqrt{2\lambda})}
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	Write $M_t = e^{\sqrt{2 \lambda}(B_t - (b+a)/2)-\lambda t} + e^{-\sqrt{2 \lambda}(B_t -(b+a)/2)-\lambda t}$. Note $C_t = e^{\sqrt{2 \lambda}B_t - \frac{2 \lambda}{2}t}$ and $D_t = e^{-\sqrt{2 \lambda}B_t - \frac{2 \lambda}{2}t}$ are martingales. Then the sum scaled sum $M_t$ is a martingale which is uniformly integrable(since the terms uniformly integrable). By optional stopping we have
+	$\E[M_T] = \E[M_0] = 2 cosh(\sqrt{2\lambda}(b+a)/2)$. Furter we can compute $\E[M_T] = e^{-\sqrt{2 \lambda} (b-a)/2}\E[e^{-\lambda T}1_{T_a \leq T_b}] + e^{\sqrt{2 \lambda}(b-a)/2}\E[e^{-\lambda T}1_{T_a \leq T_b}] + e^{\sqrt{2 \lambda}(b-a)/2}\E[e^{-\lambda T}1_{T_a > T_b}] + e^{-\sqrt{2 \lambda} (b-a)/2}\E[e^{-\lambda T}1_{T_a > T_b}]$. In turn this equals $\E[e^{-\lambda T}](e^{\sqrt{2\lambda}(b-a)/2}+e^{-\sqrt{2\lambda}}(b-a)/2) = \E[e^{-\lambda T}] 2cosh(\sqrt{2 \lambda} (b-a)/2)$ which gives the desired result
+\end{proof}
+
+\begin{prop}
+	For $\lambda > 0$ 
+	\begin{align*}
+		\E[e^{-\lambda T}1_{T=T_0}] = \frac{sinh(b\sqrt{2\pi})}{sinh((b-a)\sqrt{2\lambda})}
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	We can compute $\E[e^{\sqrt{2 \lambda}(B_t - (b+a)/2)} - e^{-\sqrt{2 \lambda}(B_t - (b+a)/2)-\lambda t}] = -2sinh(\sqrt{2\lambda} (a+b)/2)$. We also compute it as $-2sinh(\sqrt{2\lambda} (b-a)/2)\E[e^{-\lambda T}1_{T_a \leq T_b}] + 2 sinh(\sqrt{2 \lambda} (b-a)/2)\E[e^{-\lambda T}1_{T_a > T_b}]$. 
+
+	Using the $sinh$ additivity formula yields the result. 
+\end{proof}
+
+\begin{prop}
+	We compute $P(T_a < T_b)$ 
+\end{prop}
+
+\begin{proof}
+	We simply use DCT on part 2. To see
+	$P(T_a < T_b) = \E[1_{T=T_a}] = lim_{\lambda \to 0} \E[e^{-\lambda T} 1_{T = T_a}] = \frac{b}{b-a}$ when comparing exponentials. 
+\end{proof}
+
+\question{Question 18}
+
+Let $B_t$ be a brownian motion starting at 0. Let $a > 0$ with $\sigma_a = inf\{t \geq 0 : B_t \leq t -a\}$
+
+\begin{prop}
+	$\sigma_a < \infty$ is a stopping time
+\end{prop}
+
+\begin{proof}
+	Clearly $\sigma_a$ respects the sigma field since it is a function of $B_t$. Further the probability $B_t -t$ is greater than $-a$ always is 0. More formally $liminf B_t -t = -\infty$. 
+\end{proof}
+
+\begin{prop}
+	For every $\lambda \geq 0$ we have
+	\begin{align*}
+		\E[e^{-\lambda \sigma_a}] = e^{-a(\sqrt{1+2\lambda}-1)}
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	We know that for $\mu =  1 - \sqrt{1+2 \lambda}$ we have $e^{\mu B_t^{\sigma_a} - \mu^2/2 \sigma_a \wedge t}$ is a (local) martingale.
+\end{proof}
+
+\begin{prop}
+	Let $\mu \in \R$ and set $M_t = e^{\mu B_t - \frac{\mu^2}{2}t}$. Then the stopped martingale $M_{\sigma_a \wedge t}$ is closed $\iff$ $\mu \leq 1$.
+\end{prop}
+
+\begin{proof}
+	Clearly $1 = \E[M_{\sigma_a}] = \E[e^{\mu(\sigma_a -a) - \mu^2/2\sigma_a}] = \E[e^{-(\mu^2/2-\mu)\sigma_a-\mu a}]$ $\iff$ $\E[e^{-(\mu^2/2 - \mu)\sigma_a}] = e^{\mu a}$. By the second proposition we know $\E[e^{-\mu^2/2-\mu)\sigma_a}] = e^{-a(\mu-2)}$ when $\mu > 1$ and $e^{a \mu}$ otherwise.
+
+	We know $1 = \E[M_{0 \wedge \sigma_a}] = \E[M_{\infty \wedge \sigma_a}] = \E[M_{\sigma_a}]$ when we have closedness. We further know in the other direction $M_{t \wedge \sigma_a} \geq \E[M_{\sigma_a} | \mathcal{F}_{t \wedge \sigma_a}]$ and then if probability the RV exceeds its expectation is nonzero we will have $1 = \E[M_{0 \wedge \sigma_a}] = \E[M_{t \wedge \sigma_a}] > \E[M_{\sigma_a}] = 1$, a contradiciton. This concludes the proof
+\end{proof}
+
+\question{Question 19}
+
+\begin{prop}
+	Let M be a martingale with cts sample path with $M_0 = 0$. Further $M$ a gaussian process. Then for every $t \geq 0$ and $s > 0$ we have $M_{t+s} - M_t$ is independent o $\sigma(M_r,0 \leq \leq t)$ .
+\end{prop}
+
+\begin{proof}
+	Compute $\E[M_{s+t}M_t] = \E[M_{s+t} | M_t]\E[M_t] = \E[M_t^2]$. We then also have $\E[(M_{t+s} -M_t)M_r] = 0$ for $0 \leq r \leq t$. Then we must have independence which follows from orthogonality of these gaussian random variables.
+\end{proof}
+
+\begin{prop}
+	We show using 1. $\exists$ a continuous monotone nondecreasing $f : \R_+ \to \R_+$ s.t. $\langle M,M \rangle_t = f(t)$
+\end{prop}
+
+\begin{proof}
+	We use the function $f(t) = \E[M_t^2]$ inspired by the brownian motion case($\langle B,B\rangle = t = \E[B_t^2]$).
+
+	Via Jensen's inequality and the martingale property this is nondecreasing. To show continuity consider Doob's inequality which says $\E[sup_{0 \leq s \leq T} |M_s|^2] \leq 4 \E[|M_T|^2| < \infty$ for arbitrary $T > 0$. Then dominated convergence justifies $lim_{n \to \infty} f(t_n) = lim_{n \to \infty} \E[M_{t_n}^2] = E[M_t^2] = f(t)$
+
+	We establish $f(t) = \langle M,M\rangle_t$.
+\end{proof}
+
+\question{Question 20}
+
+Let M be a CLM with $M_0 = 0$. 
+
+\begin{prop}
+	For every $n \geq 1$ let $T_n = inf\{t \geq 0 : |M_t|= n\}$. Then a.s. $\{lim_{t \to \infty} M_t \text{ exists and finite}\} = \bigcup_{n \geq 1} \{T_n = \infty\} \subseteq \{\langle M ,M \rangle_{\infty} < \infty \}$
+\end{prop}
+
+\begin{proof}
+	Recall M has continuous sample paths so $T_n = inf\{t \geq 0 | |M_t| \geq n \}$ reduces M and then $M^{T_n}$ is uniformly integrable. Thus we have $M_{\infty}^{T_n}$. We also know $\langel M,M \rangle_{T_n} < \infty$. Let $A = \bigcup_{n \geq 1}\{M_{\infty}^{T_n} exists and \langle M, M \rangle_{T_n} < \infty\}$. We know $P(A) = 1$. 
+
+	For fixed sample $w$ in A s.t. $M_t$ limit exists we know $|M_t(w)| \leq M$ uniformly bounded. Then $T_m(w) = \infty$ for $m > M$. Therefore $w \in A \cap \bigcup \{T_n = \infty\}$. Now suppose $T_m(w) = \infty$ for some m. Then it must be $M_{\infty}(w) = M_{\infty}^{T_m}(w)$ and is less than m. Also $\langle M, M \rangle_{\infty}(w) = \langle M,M\rangle_{T_m}(w) < \infty$. 
+\end{proof}
+
+\begin{prop}
+	Set $S_n = inf\{t \geq 0: \langle M , M \rangle_t = n\}$. Then a.s. $\{\langle M,M \rangle_{\infty} < \infty\} = \bigcup_{n \geq 1} \{S_n = \infty\} \subseteq \{lim_{n \to \infty} M_t \text{ exists and finite}\}$
+\end{prop}
+
+\begin{proof}
+	%?Why is bracket increasing process?
+	We have since $\langle M,M\rangle$ increasing $\{\langle M , M \rangle_{\infty} < \infty\} \bigcup_{n \geq 1} \{S_n = \infty\}$. Fixing $n \geq 1$ we write $\langle M^{S_n},M^{S_n}\rangle_t = \langle M,M\rangle_{S_n \wedge t} \leq n$. So $\E[\langle M^{S_n} ,M^{S_n}\rangle \leq n$. So we have $L^2$ boundedness and thus convergence a.s. Sending to the limit gives the desired result. 
+
+	Since we have double inclusion this gives set equality.
+\end{proof}
+
+\question{Question 21}
+
+For $n \geq 1$ let $M^n = (M_t^n)$ be a CLM 0 at $t = 0$. Suppose $lim_{n \to \infty} \langle M^n, M^n \rangle_{\infty}$ in probability
+
+\begin{prop}
+	Let $\epsilon > 0$ and for all $n \geq 1$ let $T_{\epsilon}^n = inf\{t \geq 0 : \langle M^n, M^n \rangle_t \geq \epsilon\}$. Then $T_{\epsilon}^n$ is a stopping time and $M_t^{n,\epsilon} = M_{t \wedge T_{\epsilon}^n}^n$ is a martingale bounded in $L^2$
+\end{prop}
+
+\begin{proof}
+	Because $\langle M^n, M^n \rangle$ has continuos sample paths we know $T_{\epsilon}^n$ is a stopping time. Then the stopping $(M^n)^{T_{\epsilon}^n}$ is a CLM s.t. $\langle M^{n,\epsilon},M^{n,\epsilon}\rangle \leq \epsilon$. Thus it must be $M^{n,\epsilon}$ bounded in $L^2$. 
+\end{proof}
+
+\begin{prop}
+	We have $\E[sup|M_t^{n,\epsilon}|^2] \leq 4 \epsilon$
+\end{prop}
+
+\begin{proof}
+	We showed $M_t^{n,\epsilon}$ bounded in $L^2$. So we know $\E[M_{\infty}^{n,\epsilon}^2] = \E[\langle M^{n,\epsilon},M^{n,\epsilon}\rangle_{\infty}] \leq \epsilon$. 
+
+	Next since we want to bound the sup we apply Doob's maximal inequality yielding $\E[sup_{0 \leq s \leq t} |M_s^{n,\epsilon}|^2\ \leq 4 \E[|M_t^{n,\epsilon}|^2]$. Because we have a martingale we also know $\E[(M_s^{n,\epsilon})^2] \leq \E[(M_t^{n,\epsilon})^2]$. Then applying our bound on the limit yield which upper bounds the sup yields the result for fixed $t$. Since it holds for all t it holds and then limit, giving the desired inequality.
+\end{proof}
+
+\begin{prop}
+	For $a > 0$ write $P(sup_{t \geq 0}|M_t^n|\geq a) \leq P(sup_{t \geq 0} |M_t^{n\epsilon}| \geq a) + P(T_{\epsilon}^n < \infty)$.
+
+	Then $lim_{n \to \infty} (sup_{t \geq 0}|M_t^n|) = 0$ in probability
+\end{prop}
+
+\begin{proof}
+	We can compute
+	\begin{align*}
+		P(sup_{t \geq 0}|M_t^n| \geq a) \leq P(sup_{t \geq 0}|M_t^n| \geq a, T_{\epsilon}^n = \infty) + P(T_{\epsilon}^n < \infty) \leq P(sup_{t \geq 0} |M_t^{n,\epsilon}| \geq a) + P(T_{\epsilon}^n < \infty)
+	\end{align*}
+
+	The first term in the upper bound can be bound using chebyshev and applying the previous proposition. The second term goes to 0 as $n \to \infty$ and then as $\epsilon \to 0$. Hence we get convergence to 0 in probability.
+\end{proof}
+
+\question{Question 22}
+
+Let $X_t$ be a continuous and uniformly integrable martingale with $X_0 = 0$. Suppose we can find $M >0$ s.t. $\E[|X_{\infty} - X_{\tau}| |\mathcal{F}_{\tau}] \leq M$ for every stopping time $\tau$. Define $X^*$ as the sup. Then
+
+\begin{prop}
+	For all $\lambda,\mu > 0$ we have 
+	\begin{align*}
+		P(X^* \geq \lambda + \mu) \leq M/\mu P(X^* \geq \lambda)
+	\end{align*}
+\end{prop}
+
+\question{Question 23}
+
+\begin{prop}
+Let V be a progressively measurable process s.t. $\int_0^{\infty} V_S^2 ds \leq 1$ a.s. Then for $x \geq 0$ we have $P(sup_{t \geq 0} \int_0^t V(s)dB_s \geq x) \leq e^{-x^2/2}$
+\end{prop}
+
+\begin{proof}
+	
+\end{proof}
+
+\question{Question 24}
+
+\begin{prop}
+	$\E[B_1^{2n}] = (2n-1)...(3)(1)$
+\end{prop}
+
+\begin{proof}
+	Note $B_1^{2n}$ is just a normal gaussian. We prove this via induction. Clearly the base case holds. We proceed with integration by parts via Ito.
+
+	\begin{align*}
+		B_1^{2n} = B_1 B_1^{2n-1} = B_0^{2n} + \int_0^1 B_sdB_s^{2n-1} + \int_0^1 B_s^{2n-1}dB_s + \langle B,B^{2n-1}\rangle_1
+	\end{align*}
+
+	Note $dB_s^{2n-1} = (2n-1)(2n-2)B_s^{2n-3}ds + (2n-1)B_s^{2n-2}dB_s$. When we take the expectation we see the last two terms disappear(via symmetry) and hence are left with $\E[B_1^{2n}] = \E \int_0^1 B_s((2n-1)(2n-2)B_s^{2n-3}ds + (2n-1)B_s^{2n-2}dB_s) = \E \int_0^1 (2n-1)(2n-2)B_s^{2n-2}ds = (2n-1)\E[B_1^{2n-2}]$ which completes the induction and the proof.
+\end{proof}
+
+\question{Question 25}
+
+We define the Hermite Polynomial as 
+\begin{align*}
+	H_n(x,t) = \sum_{n=0}^{\infty} H_n(x,t) \frac{\theta^n}{n!} = e^{\theta x - \frac{1}{2}\theta^2 t} = F(x,t,\theta)
+\end{align*}
+
+for $t \geq 0, x, \theta \in \R$.
+
+\begin{prop}
+	$H_n$ satisfies $H_{n+1} = x H_n - nt H_{n-1}$
+\end{prop}
+
+\begin{proof}
+	Note:
+	\begin{align*}
+		e^{\theta x - 1/2 \theta^2 t} = \sum_{n \geq 0} \frac{(\theta x - 1/2 \theta^2 t)^n}{n!}
+	\end{align*}
+	Compute
+	\begin{align*}
+		&F_{\theta}(x,t,\theta) = (x-\theta t)F(x,heta)  = x\sum_{n=0}^{\infty} H_n(x,t) \frac{\theta^n}{n!} - \theta t \sum_{n=0}^{\infty} H_n(x,t) \frac{\theta^n}{n!}\\
+		&F_{\theta}(x,t,\theta) = \sum_{n=1}^{\infty} H_n(x,t) \frac{\theta^{n-1}}{(n-1)!} = \sum_{n=0}^{\infty} H_{n+1}(x,t) \frac{\theta^{n}}{(n)!}
+	\end{align*}
+
+	Collecting terms give the desired result since is true for arbitrary $\theta$.
+\end{proof}
+
+\begin{prop}
+	$H_n$ solves $\partial_t H_n + \frac{1}{2}\partial_x^2 H_n = 0$
+\end{prop}
+
+\begin{proof}
+	Compute $F_{xx}(x,t,\theta) = \theta^2 e^{\theta x -(1/2)\theta^2 t}$ and $F_t(x,t,\theta) = -\frac{1}{2} \theta^2 e^{\theta x - (1/2) \theta^2 t}$. By dct we also know $F_{xx}(x,t,\theta) = \sum_{n=0}^{\infty} H_{n,xx}(x,t)\frac{\theta^n}{n!}$ and $F_{t}(x,t,\theta) = \sum_{n=0}^{\infty} H_{n,t}(x,t)\frac{\theta^n}{n!}$. Then we know $F_t(x,t,\theta) + (1/2)F_{xx}(x,t,\theta) = 0$ and since this holds for all $\theta$ we know this holds for each $H_n$.
+	%Why does this work?
+\end{proof}
+
+\begin{prop}
+	We have
+	\begin{align*}
+		H_{n+1}(B_t,t) = \int_0^t (n+1)H_n(B_s,s)dB_s = (n+1)! \int_0^t \int_0^{t_1}...\int_0^{t_n} dB_{t_{n+1}} ... dB_{t_1}
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	This follows from the previous propositions and Ito's formula. 
+	\begin{align*}
+		H_{n+1}(B_t,t) = H_{n+1}(B_0,0) + \int_0^t \frac{dH_{n+1}}{dx}(B_s,s)dB_s + \int_0^t (\frac{dH_{n+1}}{dt} + \frac{1}{2}\frac{d^2H_{n+1}}{dx^2})(B_s,s)ds
+	\end{align*}
+	%Why does \langle t, B_s\rangle = 0 = \langle t,t\rangle?
+	But we know the second term is 0 by the previous proposition. And further by the first proposition and an inductive argument we hget $\frac{dH_{n+1}}{dx} = H_n$ as desired. Applying the result iteratively yields the rest of the equalities.
+\end{proof}
+
+\question{Question 26}
+
+Consider the complex Brownian motion $B(t) = B_1(t)+iB_2(t)$ where $B_1,B_2$ ind. one-dimenstional brownian motions. Suppose $B(0) = i$ and set $T$ to be first time $B(t)$ hits real line. 
+
+\begin{prop}
+	$T < \infty$ almost surely
+\end{prop}
+
+\begin{prop}
+	We know $B(t)$ hits the real line when $B_2(t) = 0$. But we know the probability $B_2(t) \neq 0$ is 0 since it is a brownian motion, in particular via proposition 2.14. 
+\end{prop}
+
+\begin{prop}
+	We compute the distribution of $B(T)$ by computing $\E[e^{i \lambda B(T)}]$ for $\lambda \in \R$.
+\end{prop}
+
+\begin{proof}
+	
+\end{proof}
+
+\question{Question 27}
+
+\begin{prop}
+	If $B_t$ is a brownian motion then $X_t = e^{(1/2)t} cos(B_t)$ is a martingale
+\end{prop}
+
+\begin{prop}
+	We apply Ito's formula to show this a martingale. Write $F(t,x)$
+
+	Ito tells us $X_t = F(t,B_t) = F(0,B_0) + \int_0^t \frac{df}{dx}(s,B_s)dB_s + \int_0^t(\frac{dF}{dx} + (1/2) \frac{d^2F}{dx^2})(t,B_s)dt$
+
+	Further note via a simple computation $\frac{dF}{dx} + (1/2) \frac{d^2F}{dx^2} = 0$ so $X_t = F(0,B_0) + \int_0^t \frac{df}{dx}(s,B_s)dB_s$ which shows it a martingale. 
+\end{prop}
+
+\question{Question 28}
+
+\begin{prop}
+	Via Ito integration we have
+	\begin{align*}
+		\int_0^t B_s^2 dB_s = \frac{1}{3}B_t^3 - \int_0^t B_s ds
+	\end{align*}
+\end{prop}
+
+\begin{proof}
+	Fix a sequence of partitions $\{t_{n_i}\}$ from 0 to with $B_t^n = B_{t_j} = B_J, t \in [t_j,t_{j+1}]$. We set $\mu_n = sup|t_{n_i} - t_{n_{i+1}}| \to 0$ as $n \to \infty$. Note $F(x) = x^3/3 = \int_0^xf(s)ds$. Then $F(B_{k+1}) = F(B_k) + (B_k)^2(B_{k+1} - B_k) + B_k(B_{k+1} - B_k)^2 + ...$ via a taylor series argument. 
+
+	Then we get $f(B_k)(B_{k+1}- B_k) = F(B_{k+1}) - F(B_k) - B_k(B_{k+1}-B_k)^2 -...$. Summing the expression over the partition and refining sends the LHS to our desired ito integral ie. $\int_0^t B_s^2 dB_s$. We compute the right hand side. 
+
+	Note the first two terms telescope, yielding $F(B_t) = \frac{B_t^3}{3}$. So we want to show the rest of the terms yield $\int_0^t B_s ds$. It suffices to argue $B_k((B_{k+1} - B_k)^2 - (t_{k+1}-t_k)) \to 0$ when summed as then we add and subtract $t_{k+1}-t_k)$ and see $B_k(t_{k+1} -t_k) \to \int_0^t B_sds$ when summed. 
+
+	To show this is 0 we compute the variance of the sum which we see goes to 0. A similar argument works for the higher order terms. Write $\sum_{k=0}^n Var(B_k)(t_{k+1}-t_k)^2 Var(B_{k+1}-B_k)^2/(t_{k+1}-t_k) - 1) = \sum_{k=0}^n t_k(t_{k+1}-t_k)^2 Var(B_{k+1}-B_k)^2/(t_{k+1}-t_k) - 1) \to 0$ as the partition gets finer
+
+\end{proof}
+
+\question{Question 29}
+
+Let B be a standard 1d Brownian motion with $B_0 = 0$ and $f \in C^2(\R)$ and $g \in C(\R)$. Let $X_t = f(B_t) e^{-\int_0^t g(B_s)ds}$
+
+\begin{prop}
+	$X_t$ is a semi-martingale
+\end{prop}
+
+\question{Question 30}
+
+Let $X_t$ be as defined.
+
+\begin{prop}
+	$X_t$ is a brownian motion
+\end{prop}
+
+\begin{proof}
+	We know $X$ is a CLM(since $B_t$ is martingale) with $X_0 = 0$. Further we can compute its quadratic variation as 
+	\begin{align*}
+		\langle X, X\rangle_t = \int_0^t sgn(B_t)^2ds = t
+	\end{align*}
+
+	which shows it a brownian motion. 
+\end{proof}
+
+\begin{prop}
+	$X_t$ is uncorrelated with $B_t$.
+\end{prop}
+
+\begin{proof}
+	We simply apply Ito's formula and compute. 
+\end{proof}
+
+\question{Question 31}
+
+\begin{prop}
+	Let B be a 2d brownian motion with $B_0 = (1,0)$. Suppose B never hits the origin, then $X_t = log|B_t|$ is a CLM but not a martingale.
+\end{prop}
+
 
 \end{document}
 
